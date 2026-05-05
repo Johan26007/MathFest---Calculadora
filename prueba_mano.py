@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 
-# Usamos la definición directa que Python ya encontró
+# Usamos Mediapipe 
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 

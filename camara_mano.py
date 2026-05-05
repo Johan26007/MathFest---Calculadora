@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 
+# Inicialización de Mediapipe
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
 hands = mp_hands.Hands(
@@ -10,10 +11,10 @@ hands = mp_hands.Hands(
     min_tracking_confidence=0.5
 )
 
-# IDs de las puntas de los dedos (Índice, Medio, Anular, Meñique)
+# IDs de las puntas de los dedos
+# Pulgar: 4, Índice: 8, Medio: 12, Anular: 16, Meñique: 20
 tip_ids = [4, 8, 12, 16, 20]
 
-# 2. Iniciar la cámara
 cap = cv2.VideoCapture(0)
 
 print("Cámara iniciada. Presiona 'q' para salir.")
@@ -21,9 +22,9 @@ print("Cámara iniciada. Presiona 'q' para salir.")
 while cap.isOpened():
     success, img = cap.read()
     if not success:
-        continue
+        break
 
-    # Voltear imagen y convertir a RGB
+    # Voltear imagen para efecto espejo y convertir a RGB
     img = cv2.flip(img, 1)
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     results = hands.process(img_rgb)
@@ -32,6 +33,7 @@ while cap.isOpened():
         for hand_lms in results.multi_hand_landmarks:
             landmarks = []
             for id, lm in enumerate(hand_lms.landmark):
+                #Coordenadas en pixeles
                 h, w, c = img.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
                 landmarks.append([cx, cy])
@@ -39,31 +41,34 @@ while cap.isOpened():
             if len(landmarks) != 0:
                 fingers = []
 
-                # Lógica del Pulgar (Punto 4 vs Punto 3)
-                if landmarks > landmarks:
+                # --- LOGICA DEL PULGAR ---
+                # Comparamos la posicion X de la punta con la base del pulgar.
+                if landmarks[tip_ids[0]][0] > landmarks[tip_ids[0] - 1][0]:
                     fingers.append(1)
                 else:
                     fingers.append(0)
 
-                # Lógica de los otros 4 dedos (Punta vs Nudillo)
-                for id in range(0, 4):
-                    if landmarks[tip_ids[id]] < landmarks[tip_ids[id] - 2]:
+                # --- LOGICA DE LOS 4 DEDOS --- 
+                # El valor de Y disminuye mientras mas arriba este el punto.
+                for id in range(1, 5):
+                    if landmarks[tip_ids[id]][1] < landmarks[tip_ids[id] - 2][1]:
                         fingers.append(1)
                     else:
                         fingers.append(0)
 
                 total_fingers = fingers.count(1)
                 
-                # Dibujar el número gigante
-                cv2.rectangle(img, (20, 20), (200, 130), (0, 255, 0), cv2.FILLED)
-                cv2.putText(img, str(total_fingers), (60, 110), 
-                            cv2.FONT_HERSHEY_PLAIN, 7, (255, 255, 255), 10)
+                # cuadro de fondo para el contador de dedos
+                cv2.rectangle(img, (20, 20), (150, 150), (0, 255, 0), cv2.FILLED)
+                cv2.putText(img, str(total_fingers), (45, 125), 
+                            cv2.FONT_HERSHEY_DUPLEX, 4, (255, 255, 255), 5)
 
-            # Dibujar esqueleto
+            # Dibujar las conexiones de la mano
             mp_draw.draw_landmarks(img, hand_lms, mp_hands.HAND_CONNECTIONS)
 
-    cv2.imshow("MathFest - Version1", img)
+    cv2.imshow("VersionFinalContador", img)
 
+    # Cerrar con la tecla 'q'
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
