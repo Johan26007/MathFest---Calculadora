@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import io
 
-# --- FUNCIONES DE LÓGICA MATHFEST (TU CÓDIGO ORIGINAL) ---
+# Logica principal
 
 def contar_dedos(landmarks, tip_ids):
     fingers = []
@@ -45,7 +45,7 @@ def generar_grafica_cv2(tipo, coeffs):
     plt.close(fig)
     return cv2.resize(cv2.imdecode(img_arr, cv2.IMREAD_COLOR), (350, 350))
 
-# --- FUNCIÓN ENVOLVENTE DE LA CÁMARA ---
+#Camara
 
 def abrir_camara_mathfest():
     mp_hands = mp.solutions.hands
@@ -134,7 +134,7 @@ def abrir_camara_mathfest():
     cap.release()
     cv2.destroyAllWindows()
 
-# --- INTERFAZ FLET ---
+#Interfaz Flet
 
 def main(page: ft.Page):
     page.title = "MATHFEST"
@@ -149,7 +149,7 @@ def main(page: ft.Page):
     entrada_nombre = ft.TextField(label="Ingrese su Nombre", width=300, border_radius=10)
     label_mensaje = ft.Text("", size=16)
 
-    # Nota: Asegúrate que la carpeta Img exista con estos nombres
+    # Nota: Cambiar nombres de las img
     try:
         img_calcula = ft.Image(src="Img/Calcula.png", width=100, height=100)
         img_cere = ft.Image(src="Img/cere.png", width=100, height=100)
@@ -199,7 +199,6 @@ def main(page: ft.Page):
         ])
 
     def abrir_modulo_graficas(e):
-        # Primero mostramos la pantalla de "Cargando" en Flet
         limpiar_y_actualizar([
             ft.Text("Módulo de Gráficas", size=25, weight="bold"),
             ft.Text("La cámara se abrirá en una ventana emergente...", size=14),
@@ -207,7 +206,7 @@ def main(page: ft.Page):
             ft.Container(height=20),
             ft.ElevatedButton("Regresar al Menú", on_click=mostrar_menu_operaciones, bgcolor="purple", color="white")
         ])
-        # Ejecutamos tu código de OpenCV
+        # Ejecucion con OpenCV
         abrir_camara_mathfest()
 
     mostrar_pantalla_inicial()
