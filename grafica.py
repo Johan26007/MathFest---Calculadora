@@ -132,7 +132,6 @@ while cap.isOpened():
     elif estado_actual == 4:
         cv2.putText(img, f"Funcion {tipo_funcion.upper()} graficada", (40, 55), fuente, 1.3, (0, 255, 0), 2)
         cv2.putText(img, "Presiona 'R' para volver al Menu", (40, 100), fuente, 0.8, (200, 200, 200), 1)
-        cv2.putText(img, "Presiona 'Q' para salir", (40, 100), fuente, 0.8, (200, 200, 200), 1)
         if grafica_img is not None:
             # Pegamos la gráfica
             img[150:500, w_img-400:w_img-50] = grafica_img
